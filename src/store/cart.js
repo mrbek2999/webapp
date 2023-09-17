@@ -2,25 +2,22 @@ import {createSlice} from "@reduxjs/toolkit";
 import {apiCall} from "./apiAction";
 
 const slice = createSlice({
-    name: 'documents',
-    initialState: {documents: [], document_single: false, message: false},
+    name: 'cart',
+    initialState: {cart: [], cart_single: false, message: false},
     reducers:{
-        getDocuments: (state,action)=>{
-            state.documents = action.payload
+        getCart: (state,action)=>{
+            state.cart = action.payload
         },
-        getOneDocument: (state,action)=>{
-            state.document_single = action.payload
-        },
-        saveDocument: (state,action)=>{
-            state.documents.unshift(action.payload)
+        saveCart: (state,action)=>{
+            state.cart.unshift(action.payload)
             state.message = true
         },
-        editDocument: (state,action)=>{
-            state.document_single = false
-            state.message = true
+        editCart: (state,action)=>{
+            state.cart = state.cart.map(item=>item.id === action.payload.id ? action.payload : item)
+            state.message = 'edited'
         },
-        deleteToDocument: (state,action)=>{
-            state.documents = state.documents.filter(item=>item.id !== action.payload.id)
+        deleteToCart: (state,action)=> {
+            state.cart = state.cart.filter(item => item.id !== action.payload.id)
             state.message = 'deleted'
         },
         messageReset: (state,action)=>{
@@ -32,45 +29,30 @@ const slice = createSlice({
     }
 })
 
-export const getAlLDocuments = () => apiCall({
-    url: 'documents/',
+export const getAllCart = () => apiCall({
+    url: 'cart/',
     method: 'GET',
-    onSuccess: slice.actions.getDocuments.type
+    onSuccess: slice.actions.getCart.type
 })
 
-export const documentSave = (data) => apiCall({
-    url: 'documents/',
+export const cartSave = (data) => apiCall({
+    url: 'cart/',
     method: 'POST',
-    onSuccess: slice.actions.saveDocument.type,
+    onSuccess: slice.actions.saveCart.type,
     onFail: slice.actions.messageFail.type,
-    headers: {
-        "Content-Type": "multipart/form-data",
-    },
     data,
 })
 
-export const getDocument = (id) => apiCall({
-    url: 'documents/'+id,
-    method: 'GET',
-    onSuccess: slice.actions.getOneDocument.type,
-})
-
-export const editSaveDocument = (data) => apiCall({
-    url: 'documents/'+data.id+'/',
+export const editMyCart = (data) => apiCall({
+    url: 'cart/' + data.id + '/',
     method: 'PUT',
-    onSuccess: slice.actions.editDocument.type,
-    onFail: slice.actions.messageFail.type,
-    headers: {
-        "Content-Type": "multipart/form-data",
-    },
+    onSuccess: slice.actions.editCart.type,
     data,
 })
-
-export const deleteDocument = (data) => apiCall({
-    url: 'documents/'+data.id+'/',
+export const deleteCart = (data) => apiCall({
+    url: 'cart/'+data.id+'/',
     method: 'DELETE',
-    onSuccess: slice.actions.deleteToDocument.type,
-    onFail: slice.actions.messageFail.type,
+    onSuccess: slice.actions.deleteToCart.type,
 })
 
 export default slice.reducer
