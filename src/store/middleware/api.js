@@ -6,13 +6,10 @@ export const api = ({dispatch}) => (next) => (action) => {
         next(action)
         return
     }
-    const token = localStorage.getItem('token');
-    if (token !== 'undefined') {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${JSON.parse(token)}`
-    }
+
     const {url, method, data, onSuccess, onFail, headers} = action.payload
     axios({
-        baseURL: 'https://ijtimoiybolim.ozkojmb.uz/api/',
+        baseURL: 'http://127.0.0.1:8000/api/v1/',
         url,
         method,
         data,
